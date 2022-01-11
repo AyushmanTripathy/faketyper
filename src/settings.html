@@ -1,0 +1,82 @@
+<main id="menu">
+  <section>
+    <div id="cross">
+      <span class="material-icons-outlined"> close </span>
+    </div>
+    <h1>Fake Typer</h1>
+    <p id="heading"></p>
+    <label for="file"> choose file </label>
+    <input name="file" id="file" type="file" accept="text" />
+    <button id="save">save</button>
+    <button id="reset">reset</button>
+  </section>
+</main>
+
+<script defer>
+  $("cross").onclick = () => ($("menu").style.display = "none");
+  $("reset").onclick = async () => {
+    code = await init();
+    localStorage.setItem("file", code);
+    index = 0
+    $("heading").innerHTML = "reset successfully!";
+  };
+  $("save").onclick = async () => {
+    let file = $("file").files[0];
+    if (file) {
+      file = await file.text();
+      localStorage.setItem("file", file);
+      $("heading").innerHTML = "file saved!";
+      reset(file);
+    } else $("heading").innerHTML = "no file selected!";
+  };
+</script>
+
+<style>
+  main {
+    @include fixed;
+    @include fullscreen;
+    @include flex(column);
+    @include flex-center;
+    @include roboto;
+
+    display: none;
+    z-index: 1;
+    background-color: transparent;
+  }
+  div {
+    position: relative;
+    top: 5vh;
+    left: 70vw;
+  }
+  section {
+    @include flex(column);
+    @include shadow;
+    @include section(80vh, 80vw);
+    justify-content: left;
+    padding-left: 20px;
+
+    color: $light;
+    background-color: $pri;
+    border-radius: 10px;
+  }
+  input,
+  label,
+  button {
+    @include roboto;
+    text-align: left;
+    width: 40vw;
+    max-width: 240px;
+    color: $light;
+    background-color: $pri;
+
+    outline: none;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
+    border: none;
+    border-bottom: 1px solid $light;
+  }
+  input[type="file"] {
+    display: none;
+  }
+</style>

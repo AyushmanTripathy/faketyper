@@ -1,0 +1,62 @@
+<import path="./settings" />
+<div id="ham">
+  <span class="material-icons-outlined"> menu </span>
+</div>
+<main>
+  <section>
+    <pre><code id="code"></code></pre>
+  </section>
+</main>
+
+<style>
+  main {
+    @include absolute;
+    @include flex(column);
+    @include flex-center;
+    @include fullscreen;
+    background-color: $pri;
+  }
+  section {
+    @include section(90vh, 90vw);
+    overflow: auto;
+    white-space: nowrap;
+    overflow-y: scroll;
+  }
+  div {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+
+    color: $light;
+    z-index: 1;
+  }
+  #code {
+    color: $light;
+  }
+</style>
+
+<script defer>
+  const locallyStored = localStorage.getItem("file");
+  let speed = 4;
+  let code = locallyStored ? locallyStored : init();
+  let index = 0;
+
+  async function init() {
+    const responce = await fetch("/file.txt").catch(console.error);
+    return await responce.text();
+  }
+  function reset(text) {
+    index = 0;
+    code = text;
+  }
+  function type(index) {
+    $("code").innerHTML = hljs.highlight(code.slice(0, index), {
+      language: "javascript",
+    }).value;
+  }
+  document.body.addEventListener("keydown", () => {
+    type(index);
+    index += speed;
+  });
+  $("ham").addEventListener("click", () => ($("menu").style.display = "flex"));
+</script>

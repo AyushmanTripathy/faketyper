@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="./global.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark-dimmed.min.css"
+    />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <title>Faketyper</title>
+    <style>main.uhc2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto Mono", monospace;
+  display: none;
+  z-index: 1;
+  background-color: transparent;
+}
+
+div.uhc2 {
+  position: relative;
+  top: 5vh;
+  left: 70vw;
+}
+
+section.uhc2 {
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.3);
+  height: 80vh;
+  width: 80vw;
+  justify-content: left;
+  padding-left: 20px;
+  color: #bbb;
+  background-color: #22272e;
+  border-radius: 10px;
+}
+
+input,
+label,
+button.uhc2 {
+  font-family: "Roboto Mono", monospace;
+  text-align: left;
+  width: 40vw;
+  max-width: 240px;
+  color: #bbb;
+  background-color: #22272e;
+  outline: none;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border: none;
+  border-bottom: 1px solid #bbb;
+}
+
+input[type=file] {
+  display: none;
+}
+
+main.uhc1 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #22272e;
+}
+
+section.uhc1 {
+  height: 90vh;
+  width: 90vw;
+  overflow: auto;
+  white-space: nowrap;
+  overflow-y: scroll;
+}
+
+div.uhc1 {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  color: #bbb;
+  z-index: 1;
+}
+
+#code.uhc1 {
+  color: #bbb;
+}</style>
+  </head>
+  <body>
+    <script>
+      const $ = (id) => document.getElementById(id);
+    </script>
+    <main id="menu" class="uhc2">
+  <section class="uhc2">
+    <div id="cross" class="uhc2">
+      <span  class="uhc2 material-icons-outlined"> close </span>
+    </div>
+    <h1 class="uhc2">Fake Typer</h1>
+    <p id="heading" class="uhc2"></p>
+    <label for="file" class="uhc2"> choose file </label>
+    <input name="file" id="file" type="file" accept="text"  class="uhc2"/>
+    <button id="save" class="uhc2">save</button>
+    <button id="reset" class="uhc2">reset</button>
+  </section>
+</main>
+
+<script defer class="uhc2">
+  $("cross").onclick = () => ($("menu").style.display = "none");
+  $("reset").onclick = async () => {
+    code = await init();
+    localStorage.setItem("file", code);
+    index = 0
+    $("heading").innerHTML = "reset successfully!";
+  };
+  $("save").onclick = async () => {
+    let file = $("file").files[0];
+    if (file) {
+      file = await file.text();
+      localStorage.setItem("file", file);
+      $("heading").innerHTML = "file saved!";
+      reset(file);
+    } else $("heading").innerHTML = "no file selected!";
+  };
+</script>
+
+
+
+<div id="ham" class="uhc1">
+  <span  class="uhc1 material-icons-outlined"> menu </span>
+</div>
+<main class="uhc1">
+  <section class="uhc1">
+    <pre class="uhc1"><code id="code" class="uhc1"></code></pre>
+  </section>
+</main>
+
+
+
+<script defer class="uhc1">
+  const locallyStored = localStorage.getItem("file");
+  let speed = 4;
+  let code = locallyStored ? locallyStored : init();
+  let index = 0;
+
+  async function init() {
+    const responce = await fetch("/file.txt").catch(console.error);
+    return await responce.text();
+  }
+  function reset(text) {
+    index = 0;
+    code = text;
+  }
+  function type(index) {
+    $("code").innerHTML = hljs.highlight(code.slice(0, index), {
+      language: "javascript",
+    }).value;
+  }
+  document.body.addEventListener("keydown", () => {
+    type(index);
+    index += speed;
+  });
+  $("ham").addEventListener("click", () => ($("menu").style.display = "flex"));
+</script>
+
+  </body>
+</html>
